@@ -1,0 +1,74 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#install.packages('raster')
+library(raster)
+```
+
+```{r}
+#see what files are in there, and focus on the ".tif" ones
+
+all.files <- list.files('2010 Ortho',recursive=TRUE,full.names=TRUE)
+all.files
+all.files <- all.files[!grepl('\\.tif.',all.files)]
+all.files <- all.files[unlist(lapply(strsplit(all.files,'\\.'),'[[',2)) == 'tif']
+all.files
+```
+
+```{r}
+#load the first tile and inspect
+first.tile <- stack(all.files[1])
+first.tile
+```
+
+```{r}
+#this is all four bands:
+plot(first.tile)
+```
+
+```{r}
+#let's focus in on just the first band:
+first.tile <- first.tile[[1]]
+plot(first.tile)
+```
+
+```{r}
+#zoom in
+	#just to one corner:
+full.extent <- extent(first.tile)
+crop.extent <- extent(c(full.extent[1],full.extent[1]+1000,full.extent[3],full.extent[3] + 1000))
+cropped.image <- crop(first.tile,crop.extent)
+plot(cropped.image)
+```
+
+```{r}
+#choose a crop on the map, with this line then clicking lower left then upper right:
+plot(first.tile)
+zoom.area <- locator(2)
+```
+
+```{r}
+#or manually enter a crop area:
+zoom.area <- c(1697670,1697954,641031,641198)
+crop.extent <- extent(zoom.area)
+cropped.image <- crop(first.tile,crop.extent)
+plot(cropped.image)
+	#I believe this is in one of the areas pictured in that pdf I sent	
+```
+
+```{r}
+#lets just look at at the numbers in a tiny tiny piece of the map:
+zoom.area <- c(1697695,1697700,641056,641061)
+crop.extent <- extent(zoom.area)
+cropped.image <- crop(first.tile,crop.extent)
+as.matrix(cropped.image)
+plot(cropped.image)
+```
+
